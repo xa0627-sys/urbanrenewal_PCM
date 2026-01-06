@@ -20,15 +20,14 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
     tickInterval 1day
-    topAxisFormat %Y-%m
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14
     團隊工作會議            :        2026-01-15, 2026-01-20
     1F 店面拜訪             :        2026-01-20, 2026-01-31
-    理事會（會前會）         :milestone, board_meeting, 2026-02-01, 1d
+    理事會（會前會）         :milestone, crit, 2026-02-01, 1d
     模擬系統衝刺            :        2026-02-02, 2026-02-07
-    會員大會 1（議決）       :milestone, member_meeting1, 2026-02-08, 1d
+    會員大會 1（議決）       :milestone, active, 2026-02-08, 1d
     選配數據建置            :        2026-02-09, 2026-02-12
     農曆春節（停工/模擬）    :crit,   2026-02-13, 2026-02-22
     數據分析 & 擬稿          :        2026-02-23, 2026-02-28
@@ -36,7 +35,7 @@ gantt
     section 第二階段：事業計畫確認與公聽會
     寄發大會通知（T-15）     :milestone, 2026-03-01, 1d
     正式估價匯入            :        2026-03-01, 2026-03-14
-    會員大會 2（議決）       :milestone, member_meeting2, 2026-03-15, 1d
+    會員大會 2（議決）       :milestone, active, 2026-03-15, 1d
     寄發公聽會通知（T-10）   :milestone, 2026-03-19, 1d
     自辦公聽會/選配說明會    :milestone, 2026-03-29, 1d
     意見整理                :        2026-03-30, 2026-03-31
@@ -48,18 +47,12 @@ gantt
     寄發抽籤通知            :        2026-05-06, 2026-05-07
     公開抽籤會              :milestone, 2026-05-17, 1d
     權變計畫製作            :        2026-05-18, 2026-05-23
-    會員大會 3（議決）       :milestone, member_meeting3, 2026-05-24, 1d
+    會員大會 3（議決）       :milestone, active, 2026-05-24, 1d
 
     section 第四階段：報核衝刺
     文書作業期              :        2026-06-01, 2026-06-25
     正式掛件報核            :milestone, 2026-06-26, 1d
 
-    classDef board fill:#dbeafe,stroke:#1d4ed8,color:#111;
-    classDef member fill:#fef3c7,stroke:#b45309,color:#111;
-    class board_meeting board;
-    class member_meeting1 member;
-    class member_meeting2 member;
-    class member_meeting3 member;
 ```
 
 ## 流程圖（Flowchart）
