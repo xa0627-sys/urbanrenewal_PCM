@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>115年(2026) 自主都更全案管理與系統開發時程表</title>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "default",
+      });
+    </script>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+        margin: 24px;
+        color: #111;
+      }
+      h1,
+      h2 {
+        margin: 0 0 12px;
+      }
+      .meta {
+        margin-bottom: 16px;
+      }
+      .section {
+        margin-top: 28px;
+      }
+      .mermaid {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>115年(2026) 自主都更全案管理與系統開發時程表</h1>
+    <div class="meta">
+      <div><strong>目標：</strong>115年6月26日 掛件報核 (事權併送)</div>
+      <div><strong>說明：</strong>此頁面可直接渲染 Mermaid 圖表，方便修改日期或節點。</div>
+    </div>
+
+    <section class="section">
+      <h2>甘特圖（Gantt）</h2>
+      <pre class="mermaid">
+%% 2026 年為民國 115 年
+gantt
+    title 115年(2026) 自主都更全案管理與系統開發時程表
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m/%d
+
+    section 第一階段：溝通、決策與春節模擬
+    系統基礎建設            :active, 2026-01-06, 2026-01-14
+    團隊工作會議            :        2026-01-15, 2026-01-20
+    1F 店面拜訪             :        2026-01-20, 2026-01-31
+    理事會（會前會）         :milestone, 2026-02-01, 1d
+    模擬系統衝刺            :        2026-02-02, 2026-02-07
+    會員大會 1（議決）       :milestone, 2026-02-08, 1d
+    選配數據建置            :        2026-02-09, 2026-02-12
+    農曆春節（停工/模擬）    :crit,   2026-02-13, 2026-02-22
+    數據分析 & 擬稿          :        2026-02-23, 2026-02-28
+
+    section 第二階段：事業計畫確認與公聽會
+    寄發大會通知（T-15）     :milestone, 2026-03-01, 1d
+    正式估價匯入            :        2026-03-01, 2026-03-14
+    會員大會 2（議決）       :milestone, 2026-03-15, 1d
+    寄發公聽會通知（T-10）   :milestone, 2026-03-19, 1d
+    自辦公聽會/選配說明會    :milestone, 2026-03-29, 1d
+    意見整理                :        2026-03-30, 2026-03-31
+
+    section 第三階段：選配、抽籤與最終定案
+    選配開始                :milestone, 2026-04-01, 1d
+    選配期間（35天）        :        2026-04-01, 2026-05-05
+    選配截止                :milestone, 2026-05-05, 1d
+    寄發抽籤通知            :        2026-05-06, 2026-05-07
+    公開抽籤會              :milestone, 2026-05-17, 1d
+    權變計畫製作            :        2026-05-18, 2026-05-23
+    會員大會 3（議決）       :milestone, 2026-05-24, 1d
+
+    section 第四階段：報核衝刺
+    文書作業期              :        2026-06-01, 2026-06-25
+    正式掛件報核            :milestone, 2026-06-26, 1d
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>流程圖（Flowchart）</h2>
+      <pre class="mermaid">
+flowchart TD
+    A[第一階段：溝通、決策與春節模擬] --> B[第二階段：事業計畫確認與公聽會]
+    B --> C[第三階段：選配、抽籤與最終定案]
+    C --> D[第四階段：報核衝刺]
+
+    A --> A1[系統基礎建設]
+    A --> A2[團隊工作會議]
+    A --> A3[1F 店面拜訪]
+    A --> A4[理事會（會前會）]
+    A --> A5[模擬系統衝刺]
+    A --> A6[會員大會 1]
+    A --> A7[選配數據建置]
+    A --> A8[農曆春節（停工/模擬）]
+    A --> A9[數據分析 & 擬稿]
+
+    B --> B1[寄發大會通知]
+    B --> B2[正式估價匯入]
+    B --> B3[會員大會 2]
+    B --> B4[寄發公聽會通知]
+    B --> B5[自辦公聽會/選配說明會]
+    B --> B6[意見整理]
+
+    C --> C1[選配開始]
+    C --> C2[選配期間]
+    C --> C3[選配截止]
+    C --> C4[寄發抽籤通知]
+    C --> C5[公開抽籤會]
+    C --> C6[權變計畫製作]
+    C --> C7[會員大會 3]
+
+    D --> D1[文書作業期]
+    D --> D2[正式掛件報核]
+      </pre>
+    </section>
+  </body>
+</html>
