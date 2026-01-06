@@ -19,7 +19,7 @@ gantt
     title 115年(2026) 自主都更全案管理與系統開發時程表
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
-    tickInterval 1day
+    tickInterval 1week
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14

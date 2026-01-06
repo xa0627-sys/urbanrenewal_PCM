@@ -38,14 +38,19 @@
         font-size: 12px;
       }
       .mermaid svg .month-line {
-        stroke: #1f2937;
-        stroke-width: 2px;
-        opacity: 0.6;
+        stroke: #0f172a;
+        stroke-width: 3px;
+        opacity: 0.85;
       }
       .mermaid svg .week-line {
-        stroke: #94a3b8;
+        stroke: #111827;
         stroke-width: 1px;
-        opacity: 0.7;
+        opacity: 0.9;
+      }
+      .mermaid svg .day-line {
+        stroke: #e5e7eb;
+        stroke-width: 1px;
+        opacity: 0.8;
       }
     </style>
   </head>
@@ -64,7 +69,7 @@ gantt
     title 115年(2026) 自主都更全案管理與系統開發時程表
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
-    tickInterval 1day
+    tickInterval 1week
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14
@@ -190,7 +195,11 @@ flowchart TD
           return new Date(year, month - 1, day);
         };
 
-        tickPositions.forEach(({ text, x }) => {
+        const dayWidth = tickPositions.length > 1
+          ? (tickPositions[1].x - tickPositions[0].x) / 7
+          : 0;
+
+        tickPositions.forEach(({ text, x }, index) => {
           const date = toDate(text);
           if (!date) return;
 
@@ -200,15 +209,29 @@ flowchart TD
           line.setAttribute("y1", 0);
           line.setAttribute("y2", bbox.height);
 
+          line.classList.add("week-line");
+          gridGroup.appendChild(line);
+
           if (date.getDate() === 1) {
-            line.classList.add("month-line");
-          } else if (date.getDay() === 1) {
-            line.classList.add("week-line");
-          } else {
-            return;
+            const monthLine = line.cloneNode(true);
+            monthLine.classList.remove("week-line");
+            monthLine.classList.add("month-line");
+            gridGroup.appendChild(monthLine);
           }
 
-          gridGroup.appendChild(line);
+          const nextX = tickPositions[index + 1]?.x ?? x + dayWidth * 7;
+          const segmentWidth = nextX - x;
+          const currentDayWidth = segmentWidth > 0 ? segmentWidth / 7 : 0;
+          for (let day = 1; day < 7; day += 1) {
+            const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            const dayX = x + currentDayWidth * day;
+            dayLine.setAttribute("x1", dayX);
+            dayLine.setAttribute("x2", dayX);
+            dayLine.setAttribute("y1", 0);
+            dayLine.setAttribute("y2", bbox.height);
+            dayLine.classList.add("day-line");
+            gridGroup.appendChild(dayLine);
+          }
         });
       };
 
