@@ -112,6 +112,7 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
     tickInterval 1week
+    weekstart monday
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14
@@ -149,9 +150,6 @@ gantt
     </section>
 
     <script type="module">
-      const formatMonthDay = (date) =>
-        `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
-
       const enhanceGantt = (ganttSvg) => {
         if (!ganttSvg || ganttSvg.dataset.enhanced === "true") return;
 
@@ -207,16 +205,6 @@ gantt
           const pixelsPerDay = (tickPositions[1].x - tickPositions[0].x) /
             ((second - first) / 86400000);
 
-          tickPositions.forEach(({ tick, text }) => {
-            const date = toDate(text);
-            if (!date) return;
-            const mondayOffset = (date.getDay() + 6) % 7;
-            const monday = new Date(date);
-            monday.setDate(date.getDate() - mondayOffset);
-            const label = tick.querySelector("text");
-            if (label) label.textContent = ` ${formatMonthDay(monday)}`;
-          });
-
           const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
           const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
           const startMonday = new Date(minDate);
@@ -261,8 +249,8 @@ gantt
         const emphasizeMeetings = () => {
           const meetingTargets = [
             { keyword: "理事會", fill: "#f97316", stroke: "#c2410c" },
-            { keyword: "會員大會", fill: "#22c55e", stroke: "#15803d" },
-            { keyword: "公聽會", fill: "#ec4899", stroke: "#be185d" },
+            { keyword: "會員大會", fill: "#ef4444", stroke: "#b91c1c" },
+            { keyword: "公聽會", fill: "#fb923c", stroke: "#ea580c" },
           ];
 
           const labelNodes = Array.from(ganttSvg.querySelectorAll("text"));

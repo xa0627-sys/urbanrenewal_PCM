@@ -20,6 +20,7 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
     tickInterval 1week
+    weekstart monday
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14
