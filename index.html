@@ -53,6 +53,10 @@
         stroke-width: 1px;
         opacity: 0.8;
       }
+      .mermaid svg .axis-label {
+        fill: #334155;
+        font-size: 12px;
+      }
       .editor {
         border: 1px solid #e5e7eb;
         border-radius: 8px;
@@ -112,7 +116,6 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
     tickInterval 1week
-    weekstart monday
 
     section 第一階段：溝通、決策與春節模擬
     系統基礎建設            :active, 2026-01-06, 2026-01-14
@@ -150,6 +153,9 @@ gantt
     </section>
 
     <script type="module">
+      const formatMonthDay = (date) =>
+        `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+
       const enhanceGantt = (ganttSvg) => {
         if (!ganttSvg || ganttSvg.dataset.enhanced === "true") return;
 
@@ -171,21 +177,9 @@ gantt
           return { tick, text, x, y };
         });
 
-        const baseY = tickPositions[0]?.y ?? 0;
-        const placeAtTop = baseY > bbox.height / 2;
-        const placeAtBottom = baseY <= bbox.height / 2;
-
-        const cloneTicks = (targetY) => {
-          tickPositions.forEach(({ tick, x }) => {
-            const clone = tick.cloneNode(true);
-            clone.classList.add("axis-clone");
-            clone.setAttribute("transform", `translate(${x}, ${targetY})`);
-            ganttSvg.appendChild(clone);
-          });
-        };
-
-        if (placeAtTop) cloneTicks(0);
-        if (placeAtBottom) cloneTicks(Math.max(0, bbox.height - 8));
+        ganttSvg.querySelectorAll("g.tick text").forEach((text) => {
+          text.style.display = "none";
+        });
 
         const gridGroup = ganttSvg.querySelector("g.grid") ?? ganttSvg;
         const year = 2026;
@@ -210,6 +204,10 @@ gantt
           const startMonday = new Date(minDate);
           startMonday.setDate(minDate.getDate() - ((minDate.getDay() + 6) % 7));
 
+          const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          labelGroup.setAttribute("class", "axis-labels");
+          ganttSvg.appendChild(labelGroup);
+
           for (
             let cursor = new Date(startMonday);
             cursor <= maxDate;
@@ -225,6 +223,23 @@ gantt
             weekLine.setAttribute("y2", bbox.height);
             weekLine.classList.add("week-line");
             gridGroup.appendChild(weekLine);
+
+            const labelText = formatMonthDay(cursor);
+            const topLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            topLabel.setAttribute("x", x);
+            topLabel.setAttribute("y", "3");
+            topLabel.setAttribute("text-anchor", "start");
+            topLabel.setAttribute("class", "axis-label");
+            topLabel.textContent = ` ${labelText}`;
+            labelGroup.appendChild(topLabel);
+
+            const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            bottomLabel.setAttribute("x", x);
+            bottomLabel.setAttribute("y", `${Math.max(0, bbox.height - 5)}`);
+            bottomLabel.setAttribute("text-anchor", "start");
+            bottomLabel.setAttribute("class", "axis-label");
+            bottomLabel.textContent = ` ${labelText}`;
+            labelGroup.appendChild(bottomLabel);
 
             if (cursor.getDate() === 1) {
               const monthLine = weekLine.cloneNode(true);
