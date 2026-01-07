@@ -33,6 +33,7 @@
         border: 1px solid #e5e7eb;
         border-radius: 8px;
         padding: 16px;
+        overflow-x: auto;
       }
       .mermaid svg .axis-clone text {
         fill: #334155;
@@ -56,6 +57,11 @@
       .mermaid svg .axis-label {
         fill: #334155;
         font-size: 12px;
+      }
+      .mermaid svg {
+        width: 100%;
+        height: auto;
+        min-width: 1200px;
       }
       .editor {
         border: 1px solid #e5e7eb;
@@ -171,6 +177,14 @@ gantt
         };
 
         const bbox = ganttSvg.getBBox();
+        const extraHeight = 28;
+        const viewBox = ganttSvg.getAttribute("viewBox");
+        if (viewBox) {
+          const [x, y, width, height] = viewBox.split(" ").map(Number);
+          if (!Number.isNaN(height)) {
+            ganttSvg.setAttribute("viewBox", `${x} ${y} ${width} ${height + extraHeight}`);
+          }
+        }
         const tickPositions = ticks.map((tick) => {
           const text = tick.querySelector("text")?.textContent?.trim() ?? "";
           const { x, y } = getTranslate(tick.getAttribute("transform"));
@@ -235,7 +249,7 @@ gantt
 
             const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
             bottomLabel.setAttribute("x", x);
-            bottomLabel.setAttribute("y", `${Math.max(0, bbox.height - 5)}`);
+            bottomLabel.setAttribute("y", `${bbox.height + 16}`);
             bottomLabel.setAttribute("text-anchor", "start");
             bottomLabel.setAttribute("class", "axis-label");
             bottomLabel.textContent = ` ${labelText}`;
