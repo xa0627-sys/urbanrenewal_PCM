@@ -121,38 +121,38 @@ gantt
     title 115年(2026) 自主都更全案管理與系統開發時程表
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
-    tickInterval 1week
+    tickInterval 1day
 
     section 第一階段：溝通、決策與春節模擬
-    系統基礎建設            :active, 2026-01-06, 2026-01-14
-    團隊工作會議            :        2026-01-15, 2026-01-20
-    1F 店面拜訪             :        2026-01-20, 2026-01-31
+    1/6~1/14 系統基礎建設      :active, 2026-01-06, 2026-01-14
+    1/15~1/20 團隊工作會議     :        2026-01-15, 2026-01-20
+    1/20~1/31 1F 店面拜訪      :        2026-01-20, 2026-01-31
     2/1 理事會（會前會）       :milestone, crit, 2026-02-01, 1d
-    模擬系統衝刺            :        2026-02-02, 2026-02-07
+    2/2~2/7 模擬系統衝刺       :        2026-02-02, 2026-02-07
     2/8 會員大會 1（議決）     :milestone, active, 2026-02-08, 1d
-    選配數據建置            :        2026-02-09, 2026-02-12
-    農曆春節（停工/模擬）    :crit,   2026-02-13, 2026-02-22
-    數據分析 & 擬稿          :        2026-02-23, 2026-02-28
+    2/9~2/12 選配數據建置       :        2026-02-09, 2026-02-12
+    2/13~2/22 農曆春節（停工/模擬）:crit,   2026-02-13, 2026-02-22
+    2/23~2/28 數據分析 & 擬稿    :        2026-02-23, 2026-02-28
 
     section 第二階段：事業計畫確認與公聽會
     3/1 寄發大會通知（T-15）  :milestone, 2026-03-01, 1d
-    正式估價匯入            :        2026-03-01, 2026-03-14
+    3/1~3/14 正式估價匯入      :        2026-03-01, 2026-03-14
     3/15 會員大會 2（議決）    :milestone, active, 2026-03-15, 1d
     3/19 寄發公聽會通知（T-10）:milestone, 2026-03-19, 1d
     3/29 自辦公聽會/選配說明會 :milestone, 2026-03-29, 1d
-    意見整理                :        2026-03-30, 2026-03-31
+    3/30~3/31 意見整理         :        2026-03-30, 2026-03-31
 
     section 第三階段：選配、抽籤與最終定案
     4/1 選配開始             :milestone, 2026-04-01, 1d
-    選配期間（35天）        :        2026-04-01, 2026-05-05
+    4/1~5/5 選配期間（35天）  :        2026-04-01, 2026-05-05
     5/5 選配截止             :milestone, 2026-05-05, 1d
-    寄發抽籤通知            :        2026-05-06, 2026-05-07
+    5/6~5/7 寄發抽籤通知       :        2026-05-06, 2026-05-07
     5/17 公開抽籤會          :milestone, 2026-05-17, 1d
-    權變計畫製作            :        2026-05-18, 2026-05-23
+    5/18~5/23 權變計畫製作     :        2026-05-18, 2026-05-23
     5/24 會員大會 3（議決）    :milestone, active, 2026-05-24, 1d
 
     section 第四階段：報核衝刺
-    文書作業期              :        2026-06-01, 2026-06-25
+    6/1~6/25 文書作業期       :        2026-06-01, 2026-06-25
     6/26 正式掛件報核         :milestone, 2026-06-26, 1d
 
       </pre>
@@ -176,8 +176,8 @@ gantt
         };
 
         const bbox = ganttSvg.getBBox();
-        const extraTop = 18;
-        const extraBottom = 24;
+        const extraTop = 30;
+        const extraBottom = 28;
         const viewBox = ganttSvg.getAttribute("viewBox");
         if (viewBox) {
           const [x, y, width, height] = viewBox.split(" ").map(Number);
@@ -214,70 +214,88 @@ gantt
 
         const dates = tickPositions.map(({ text }) => toDate(text)).filter(Boolean);
         if (dates.length >= 2) {
-          const first = dates[0];
-          const second = dates[1];
-          const pixelsPerDay = (tickPositions[1].x - tickPositions[0].x) /
-            ((second - first) / 86400000);
-
           const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
           labelGroup.setAttribute("class", "axis-labels");
           ganttSvg.appendChild(labelGroup);
 
-          tickPositions.forEach(({ text, x, transform }, index) => {
+          const dateToX = new Map();
+          tickPositions.forEach(({ text, x }) => {
             const date = toDate(text);
             if (!date) return;
+            const key = date.toISOString().slice(0, 10);
+            dateToX.set(key, x);
 
-            const weekLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            weekLine.setAttribute("x1", x);
-            weekLine.setAttribute("x2", x);
-            weekLine.setAttribute("y1", 0);
-            weekLine.setAttribute("y2", bbox.height);
-            weekLine.classList.add("week-line");
-            gridGroup.appendChild(weekLine);
-
-            const labelTick = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            labelTick.setAttribute("transform", transform);
-            labelGroup.appendChild(labelTick);
-
-            const labelText = formatMonthDay(date);
-            const topLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            topLabel.setAttribute("x", "0");
-            topLabel.setAttribute("y", "10");
-            topLabel.setAttribute("text-anchor", "start");
-            topLabel.setAttribute("class", "axis-label");
-            topLabel.textContent = ` ${labelText}`;
-            labelTick.appendChild(topLabel);
-
-            const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            bottomLabel.setAttribute("x", "0");
-            bottomLabel.setAttribute("y", `${bbox.height + 20}`);
-            bottomLabel.setAttribute("text-anchor", "start");
-            bottomLabel.setAttribute("class", "axis-label");
-            bottomLabel.textContent = ` ${labelText}`;
-            labelTick.appendChild(bottomLabel);
-
-            if (date.getDate() === 1) {
-              const monthLine = weekLine.cloneNode(true);
-              monthLine.classList.remove("week-line");
-              monthLine.classList.add("month-line");
-              gridGroup.appendChild(monthLine);
-            }
-
-            const nextX = tickPositions[index + 1]?.x;
-            if (!nextX) return;
-            const segmentWidth = nextX - x;
-            const currentDayWidth = segmentWidth > 0 ? segmentWidth / 7 : pixelsPerDay;
-            for (let day = 1; day < 7; day += 1) {
-              const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-              const dayX = x + currentDayWidth * day;
-              dayLine.setAttribute("x1", dayX);
-              dayLine.setAttribute("x2", dayX);
-              dayLine.setAttribute("y1", 0);
-              dayLine.setAttribute("y2", bbox.height);
-              dayLine.classList.add("day-line");
-              gridGroup.appendChild(dayLine);
-            }
+            const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            dayLine.setAttribute("x1", x);
+            dayLine.setAttribute("x2", x);
+            dayLine.setAttribute("y1", 0);
+            dayLine.setAttribute("y2", bbox.height);
+            dayLine.classList.add("day-line");
+            gridGroup.appendChild(dayLine);
           });
+
+          const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+          const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
+          const labelDates = new Map();
+          const addLabelDate = (date) => {
+            const key = date.toISOString().slice(0, 10);
+            labelDates.set(key, date);
+          };
+
+          for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 7)) {
+            addLabelDate(new Date(d));
+          }
+          for (
+            let m = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+            m <= maxDate;
+            m = new Date(m.getFullYear(), m.getMonth() + 1, 1)
+          ) {
+            addLabelDate(new Date(m));
+          }
+
+          Array.from(labelDates.values())
+            .sort((a, b) => a - b)
+            .forEach((date) => {
+              const key = date.toISOString().slice(0, 10);
+              const x = dateToX.get(key);
+              if (x === undefined) return;
+
+              const weekLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+              weekLine.setAttribute("x1", x);
+              weekLine.setAttribute("x2", x);
+              weekLine.setAttribute("y1", 0);
+              weekLine.setAttribute("y2", bbox.height);
+              weekLine.classList.add("week-line");
+              gridGroup.appendChild(weekLine);
+
+              const labelTick = document.createElementNS("http://www.w3.org/2000/svg", "g");
+              labelTick.setAttribute("transform", `translate(${x},0)`);
+              labelGroup.appendChild(labelTick);
+
+              const labelText = formatMonthDay(date);
+              const topLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+              topLabel.setAttribute("x", "0");
+              topLabel.setAttribute("y", "24");
+              topLabel.setAttribute("text-anchor", "start");
+              topLabel.setAttribute("class", "axis-label");
+              topLabel.textContent = ` ${labelText}`;
+              labelTick.appendChild(topLabel);
+
+              const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+              bottomLabel.setAttribute("x", "0");
+              bottomLabel.setAttribute("y", `${bbox.height + 22}`);
+              bottomLabel.setAttribute("text-anchor", "start");
+              bottomLabel.setAttribute("class", "axis-label");
+              bottomLabel.textContent = ` ${labelText}`;
+              labelTick.appendChild(bottomLabel);
+
+              if (date.getDate() === 1) {
+                const monthLine = weekLine.cloneNode(true);
+                monthLine.classList.remove("week-line");
+                monthLine.classList.add("month-line");
+                gridGroup.appendChild(monthLine);
+              }
+            });
         }
 
         const emphasizeMeetings = () => {
