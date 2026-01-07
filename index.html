@@ -291,13 +291,17 @@ gantt
         const input = document.querySelector("#gantt-input");
         const pre = document.querySelector(".mermaid");
         if (!input || !pre || !window.mermaid) return;
-        pre.textContent = input.value.trim();
-        pre.dataset.processed = "false";
-        await window.mermaid.run({ nodes: [pre] });
-        const svg = pre.querySelector("svg");
-        if (svg) {
-          svg.dataset.enhanced = "false";
-          enhanceGantt(svg);
+        const source = input.value.trim();
+        const { svg, bindFunctions } = await window.mermaid.render(
+          `gantt-${Date.now()}`,
+          source
+        );
+        pre.innerHTML = svg;
+        if (bindFunctions) bindFunctions(pre);
+        const svgEl = pre.querySelector("svg");
+        if (svgEl) {
+          svgEl.dataset.enhanced = "false";
+          enhanceGantt(svgEl);
         }
       };
 
