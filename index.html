@@ -168,7 +168,6 @@ gantt
         const ticks = Array.from(ganttSvg.querySelectorAll("g.tick"));
         if (!ticks.length) return;
 
-        ganttSvg.dataset.enhanced = "true";
 
         const getTranslate = (transform) => {
           if (!transform) return { x: 0, y: 0 };
@@ -187,9 +186,12 @@ gantt
         }
         const tickPositions = ticks.map((tick) => {
           const text = tick.querySelector("text")?.textContent?.trim() ?? "";
-          const { x, y } = getTranslate(tick.getAttribute("transform"));
-          return { tick, text, x, y };
+          const transform = tick.getAttribute("transform") ?? "translate(0,0)";
+          const { x, y } = getTranslate(transform);
+          return { tick, text, x, y, transform };
         });
+
+        ganttSvg.dataset.enhanced = "true";
 
         ganttSvg.querySelectorAll("g.tick text").forEach((text) => {
           text.style.display = "none";
@@ -213,22 +215,13 @@ gantt
           const pixelsPerDay = (tickPositions[1].x - tickPositions[0].x) /
             ((second - first) / 86400000);
 
-          const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
-          const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
-          const startMonday = new Date(minDate);
-          startMonday.setDate(minDate.getDate() - ((minDate.getDay() + 6) % 7));
-
           const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
           labelGroup.setAttribute("class", "axis-labels");
           ganttSvg.appendChild(labelGroup);
 
-          for (
-            let cursor = new Date(startMonday);
-            cursor <= maxDate;
-            cursor.setDate(cursor.getDate() + 7)
-          ) {
-            const daysFromStart = (cursor - first) / 86400000;
-            const x = tickPositions[0].x + daysFromStart * pixelsPerDay;
+          tickPositions.forEach(({ text, x, transform }, index) => {
+            const date = toDate(text);
+            if (!date) return;
 
             const weekLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
             weekLine.setAttribute("x1", x);
@@ -238,33 +231,41 @@ gantt
             weekLine.classList.add("week-line");
             gridGroup.appendChild(weekLine);
 
-            const labelText = formatMonthDay(cursor);
+            const labelTick = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            labelTick.setAttribute("transform", transform);
+            labelGroup.appendChild(labelTick);
+
+            const labelText = formatMonthDay(date);
             const topLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            topLabel.setAttribute("x", x);
+            topLabel.setAttribute("x", "0");
             topLabel.setAttribute("y", "3");
             topLabel.setAttribute("text-anchor", "start");
             topLabel.setAttribute("class", "axis-label");
             topLabel.textContent = ` ${labelText}`;
-            labelGroup.appendChild(topLabel);
+            labelTick.appendChild(topLabel);
 
             const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            bottomLabel.setAttribute("x", x);
+            bottomLabel.setAttribute("x", "0");
             bottomLabel.setAttribute("y", `${bbox.height + 16}`);
             bottomLabel.setAttribute("text-anchor", "start");
             bottomLabel.setAttribute("class", "axis-label");
             bottomLabel.textContent = ` ${labelText}`;
-            labelGroup.appendChild(bottomLabel);
+            labelTick.appendChild(bottomLabel);
 
-            if (cursor.getDate() === 1) {
+            if (date.getDate() === 1) {
               const monthLine = weekLine.cloneNode(true);
               monthLine.classList.remove("week-line");
               monthLine.classList.add("month-line");
               gridGroup.appendChild(monthLine);
             }
 
+            const nextX = tickPositions[index + 1]?.x;
+            if (!nextX) return;
+            const segmentWidth = nextX - x;
+            const currentDayWidth = segmentWidth > 0 ? segmentWidth / 7 : pixelsPerDay;
             for (let day = 1; day < 7; day += 1) {
               const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-              const dayX = x + pixelsPerDay * day;
+              const dayX = x + currentDayWidth * day;
               dayLine.setAttribute("x1", dayX);
               dayLine.setAttribute("x2", dayX);
               dayLine.setAttribute("y1", 0);
@@ -272,7 +273,7 @@ gantt
               dayLine.classList.add("day-line");
               gridGroup.appendChild(dayLine);
             }
-          }
+          });
         }
 
         const emphasizeMeetings = () => {
@@ -318,7 +319,7 @@ gantt
         const svgEl = pre.querySelector("svg");
         if (svgEl) {
           svgEl.dataset.enhanced = "false";
-          enhanceGantt(svgEl);
+          requestAnimationFrame(() => enhanceGantt(svgEl));
         }
       };
 
