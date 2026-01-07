@@ -224,14 +224,6 @@ gantt
             if (!date) return;
             const key = date.toISOString().slice(0, 10);
             dateToX.set(key, x);
-
-            const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            dayLine.setAttribute("x1", x);
-            dayLine.setAttribute("x2", x);
-            dayLine.setAttribute("y1", 0);
-            dayLine.setAttribute("y2", bbox.height);
-            dayLine.classList.add("day-line");
-            gridGroup.appendChild(dayLine);
           });
 
           const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
@@ -273,21 +265,13 @@ gantt
               labelGroup.appendChild(labelTick);
 
               const labelText = formatMonthDay(date);
-              const topLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-              topLabel.setAttribute("x", "0");
-              topLabel.setAttribute("y", "24");
-              topLabel.setAttribute("text-anchor", "start");
-              topLabel.setAttribute("class", "axis-label");
-              topLabel.textContent = ` ${labelText}`;
-              labelTick.appendChild(topLabel);
-
-              const bottomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-              bottomLabel.setAttribute("x", "0");
-              bottomLabel.setAttribute("y", `${bbox.height + 22}`);
-              bottomLabel.setAttribute("text-anchor", "start");
-              bottomLabel.setAttribute("class", "axis-label");
-              bottomLabel.textContent = ` ${labelText}`;
-              labelTick.appendChild(bottomLabel);
+              const inChartLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+              inChartLabel.setAttribute("x", "0");
+              inChartLabel.setAttribute("y", `${bbox.height - 6}`);
+              inChartLabel.setAttribute("text-anchor", "start");
+              inChartLabel.setAttribute("class", "axis-label");
+              inChartLabel.textContent = ` ${labelText}`;
+              labelTick.appendChild(inChartLabel);
 
               if (date.getDate() === 1) {
                 const monthLine = weekLine.cloneNode(true);
