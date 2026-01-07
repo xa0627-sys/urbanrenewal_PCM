@@ -7,9 +7,10 @@
     <script type="module">
       import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
       mermaid.initialize({
-        startOnLoad: true,
+        startOnLoad: false,
         theme: "default",
       });
+      window.mermaid = mermaid;
     </script>
     <style>
       body {
@@ -52,6 +53,38 @@
         stroke-width: 1px;
         opacity: 0.8;
       }
+      .editor {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 20px;
+        background: #f8fafc;
+      }
+      .editor textarea {
+        width: 100%;
+        min-height: 220px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #cbd5f5;
+        background: #fff;
+      }
+      .editor button {
+        margin-top: 12px;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: none;
+        background: #2563eb;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .editor button:hover {
+        background: #1d4ed8;
+      }
     </style>
   </head>
   <body>
@@ -60,6 +93,15 @@
       <div><strong>目標：</strong>115年6月26日 掛件報核 (事權併送)</div>
       <div><strong>說明：</strong>此頁面可直接渲染 Mermaid 圖表，方便修改日期或節點。</div>
     </div>
+
+    <section class="section">
+      <h2>編輯甘特圖</h2>
+      <div class="editor">
+        <p>修改下方內容後按「更新甘特圖」即可重新渲染。</p>
+        <textarea id="gantt-input"></textarea>
+        <button type="button" id="render-gantt">更新甘特圖</button>
+      </div>
+    </section>
 
     <section class="section">
       <h2>甘特圖（Gantt）</h2>
@@ -106,48 +148,11 @@ gantt
       </pre>
     </section>
 
-    <section class="section">
-      <h2>流程圖（Flowchart）</h2>
-      <pre class="mermaid">
-flowchart TD
-    A[第一階段：溝通、決策與春節模擬] --> B[第二階段：事業計畫確認與公聽會]
-    B --> C[第三階段：選配、抽籤與最終定案]
-    C --> D[第四階段：報核衝刺]
-
-    A --> A1[系統基礎建設]
-    A --> A2[團隊工作會議]
-    A --> A3[1F 店面拜訪]
-    A --> A4[理事會（會前會）]
-    A --> A5[模擬系統衝刺]
-    A --> A6[會員大會 1]
-    A --> A7[選配數據建置]
-    A --> A8[農曆春節（停工/模擬）]
-    A --> A9[數據分析 & 擬稿]
-
-    B --> B1[寄發大會通知]
-    B --> B2[正式估價匯入]
-    B --> B3[會員大會 2]
-    B --> B4[寄發公聽會通知]
-    B --> B5[自辦公聽會/選配說明會]
-    B --> B6[意見整理]
-
-    C --> C1[選配開始]
-    C --> C2[選配期間]
-    C --> C3[選配截止]
-    C --> C4[寄發抽籤通知]
-    C --> C5[公開抽籤會]
-    C --> C6[權變計畫製作]
-    C --> C7[會員大會 3]
-
-    D --> D1[文書作業期]
-    D --> D2[正式掛件報核]
-      </pre>
-    </section>
     <script type="module">
-      const enhanceGantt = () => {
-        const mermaidBlocks = document.querySelectorAll(".mermaid");
-        if (!mermaidBlocks.length) return;
-        const ganttSvg = mermaidBlocks[0].querySelector("svg");
+      const formatMonthDay = (date) =>
+        `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+
+      const enhanceGantt = (ganttSvg) => {
         if (!ganttSvg || ganttSvg.dataset.enhanced === "true") return;
 
         const ticks = Array.from(ganttSvg.querySelectorAll("g.tick"));
@@ -195,48 +200,115 @@ flowchart TD
           return new Date(year, month - 1, day);
         };
 
-        const dayWidth = tickPositions.length > 1
-          ? (tickPositions[1].x - tickPositions[0].x) / 7
-          : 0;
+        const dates = tickPositions.map(({ text }) => toDate(text)).filter(Boolean);
+        if (dates.length >= 2) {
+          const first = dates[0];
+          const second = dates[1];
+          const pixelsPerDay = (tickPositions[1].x - tickPositions[0].x) /
+            ((second - first) / 86400000);
 
-        tickPositions.forEach(({ text, x }, index) => {
-          const date = toDate(text);
-          if (!date) return;
+          tickPositions.forEach(({ tick, text }) => {
+            const date = toDate(text);
+            if (!date) return;
+            const mondayOffset = (date.getDay() + 6) % 7;
+            const monday = new Date(date);
+            monday.setDate(date.getDate() - mondayOffset);
+            const label = tick.querySelector("text");
+            if (label) label.textContent = ` ${formatMonthDay(monday)}`;
+          });
 
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", x);
-          line.setAttribute("x2", x);
-          line.setAttribute("y1", 0);
-          line.setAttribute("y2", bbox.height);
+          const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+          const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
+          const startMonday = new Date(minDate);
+          startMonday.setDate(minDate.getDate() - ((minDate.getDay() + 6) % 7));
 
-          line.classList.add("week-line");
-          gridGroup.appendChild(line);
+          for (
+            let cursor = new Date(startMonday);
+            cursor <= maxDate;
+            cursor.setDate(cursor.getDate() + 7)
+          ) {
+            const daysFromStart = (cursor - first) / 86400000;
+            const x = tickPositions[0].x + daysFromStart * pixelsPerDay;
 
-          if (date.getDate() === 1) {
-            const monthLine = line.cloneNode(true);
-            monthLine.classList.remove("week-line");
-            monthLine.classList.add("month-line");
-            gridGroup.appendChild(monthLine);
+            const weekLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            weekLine.setAttribute("x1", x);
+            weekLine.setAttribute("x2", x);
+            weekLine.setAttribute("y1", 0);
+            weekLine.setAttribute("y2", bbox.height);
+            weekLine.classList.add("week-line");
+            gridGroup.appendChild(weekLine);
+
+            if (cursor.getDate() === 1) {
+              const monthLine = weekLine.cloneNode(true);
+              monthLine.classList.remove("week-line");
+              monthLine.classList.add("month-line");
+              gridGroup.appendChild(monthLine);
+            }
+
+            for (let day = 1; day < 7; day += 1) {
+              const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+              const dayX = x + pixelsPerDay * day;
+              dayLine.setAttribute("x1", dayX);
+              dayLine.setAttribute("x2", dayX);
+              dayLine.setAttribute("y1", 0);
+              dayLine.setAttribute("y2", bbox.height);
+              dayLine.classList.add("day-line");
+              gridGroup.appendChild(dayLine);
+            }
           }
+        }
 
-          const nextX = tickPositions[index + 1]?.x ?? x + dayWidth * 7;
-          const segmentWidth = nextX - x;
-          const currentDayWidth = segmentWidth > 0 ? segmentWidth / 7 : 0;
-          for (let day = 1; day < 7; day += 1) {
-            const dayLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            const dayX = x + currentDayWidth * day;
-            dayLine.setAttribute("x1", dayX);
-            dayLine.setAttribute("x2", dayX);
-            dayLine.setAttribute("y1", 0);
-            dayLine.setAttribute("y2", bbox.height);
-            dayLine.classList.add("day-line");
-            gridGroup.appendChild(dayLine);
-          }
-        });
+        const emphasizeMeetings = () => {
+          const meetingTargets = [
+            { keyword: "理事會", fill: "#f97316", stroke: "#c2410c" },
+            { keyword: "會員大會", fill: "#22c55e", stroke: "#15803d" },
+            { keyword: "公聽會", fill: "#ec4899", stroke: "#be185d" },
+          ];
+
+          const labelNodes = Array.from(ganttSvg.querySelectorAll("text"));
+          labelNodes.forEach((label) => {
+            const text = label.textContent?.trim() ?? "";
+            const match = meetingTargets.find((target) => text.includes(target.keyword));
+            if (!match) return;
+            let node = label.parentElement;
+            while (node && node.tagName !== "svg") {
+              const rect = node.querySelector("rect");
+              if (rect) {
+                rect.setAttribute("fill", match.fill);
+                rect.setAttribute("stroke", match.stroke);
+                rect.setAttribute("stroke-width", "2");
+                break;
+              }
+              node = node.parentElement;
+            }
+          });
+        };
+
+        emphasizeMeetings();
+      };
+
+      const renderGantt = async () => {
+        const input = document.querySelector("#gantt-input");
+        const pre = document.querySelector(".mermaid");
+        if (!input || !pre || !window.mermaid) return;
+        pre.textContent = input.value.trim();
+        pre.dataset.processed = "false";
+        await window.mermaid.run({ nodes: [pre] });
+        const svg = pre.querySelector("svg");
+        if (svg) {
+          svg.dataset.enhanced = "false";
+          enhanceGantt(svg);
+        }
       };
 
       window.addEventListener("load", () => {
-        setTimeout(enhanceGantt, 0);
+        const input = document.querySelector("#gantt-input");
+        const pre = document.querySelector(".mermaid");
+        if (input && pre) {
+          input.value = pre.textContent.trim();
+        }
+        document.querySelector("#render-gantt")?.addEventListener("click", renderGantt);
+        renderGantt();
       });
     </script>
   </body>
