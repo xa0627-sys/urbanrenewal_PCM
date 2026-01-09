@@ -1,203 +1,199 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>115年(2026)自主都更全案衝刺時程 - 完整版</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: #fff;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        .container {
-            width: 100%;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        .toolbar {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 10px 20px;
-            background: #0969da;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #0860ca;
-        }
-        .mermaid-wrapper {
-            overflow-x: auto;
-            overflow-y: auto;
-            background: #f6f8fa;
-            border-radius: 6px;
-            border: 1px solid #d0d7de;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .mermaid {
-            min-width: 1600px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-        @media (min-width: 1024px) {
-            .mermaid-wrapper {
-                width: 100%;
-                height: auto;
-            }
-            .mermaid {
-                min-width: 1600px;
-            }
-        }
-        @media (max-width: 1023px) {
-            .mermaid-wrapper {
-                width: 100%;
-                height: 500px;
-                overflow-x: auto;
-                overflow-y: auto;
-                touch-action: pan-x pan-y;
-            }
-            .mermaid {
-                min-width: 100%;
-            }
-        }
-        @media print {
-            body {
-                padding: 0;
-                background: white;
-            }
-            .toolbar {
-                display: none;
-            }
-            .mermaid-wrapper {
-                border: none;
-                background: white;
-                overflow: visible;
-                page-break-after: auto;
-                height: auto;
-            }
-            .mermaid {
-                min-width: 1600px;
-                width: 100%;
-            }
-        }
-        @page {
-            size: A3 landscape;
-            margin: 10mm;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>115年(2026)自主都更全案衝刺時程 - 完整版</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: #fff;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      width: 100%;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0969da;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0860ca;
+    }
+    .mermaid-wrapper {
+      overflow-x: auto;
+      overflow-y: auto;
+      background: #f6f8fa;
+      border-radius: 6px;
+      border: 1px solid #d0d7de;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .mermaid {
+      min-width: 1600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    @media (min-width: 1024px) {
+      .mermaid-wrapper {
+        width: 100%;
+        height: auto;
+      }
+      .mermaid {
+        min-width: 1600px;
+      }
+    }
+    @media (max-width: 1023px) {
+      .mermaid-wrapper {
+        width: 100%;
+        height: 500px;
+        overflow-x: auto;
+        overflow-y: auto;
+        touch-action: pan-x pan-y;
+      }
+      .mermaid {
+        min-width: 100%;
+      }
+    }
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+      .toolbar {
+        display: none;
+      }
+      .mermaid-wrapper {
+        border: none;
+        background: white;
+        overflow: visible;
+        page-break-after: auto;
+        height: auto;
+      }
+      .mermaid {
+        min-width: 1600px;
+        width: 100%;
+      }
+    }
+    @page {
+      size: A3 landscape;
+      margin: 10mm;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>115年(2026)自主都更全案衝刺時程 - 完整版</h1>
-        <div class="toolbar">
-            <button onclick="printGantt()">Print to PDF</button>
-            <button onclick="downloadChart()">Download PNG</button>
-            <button onclick="toggleFullscreen()">Fullscreen</button>
-        </div>
-        <div class="mermaid-wrapper">
-            <div class="mermaid">
+  <div class="container">
+    <h1>115年(2026)自主都更全案衝刺時程 - 完整版</h1>
+    <div class="toolbar">
+      <button onclick="printGantt()">Print to PDF</button>
+      <button onclick="downloadChart()">Download PNG</button>
+      <button onclick="toggleFullscreen()">Fullscreen</button>
+    </div>
+    <div class="mermaid-wrapper">
+      <div class="mermaid">
 gantt
     title 115年(2026)東洲4-7自主都更全案衝刺時程 (整合版)
     dateFormat YYYY-MM-DD
     axisFormat %m/%d
     todayMarker off
-
     section 第一階段:前期與模擬
-    前期作業(建築/估價)       :done, a0, 2025-11-01, 2026-01-16
-    團隊作業會議             :a1, 2026-01-16, 2026-01-20
-    1F店面拜訪(CRM)          :a2, 2026-01-20, 2026-01-31
-    2/1 理事會(會前確認)      :milestone, 2026-02-01, 0d
+    前期作業(建築/估價) :done, a0, 2025-11-01, 2026-01-16
+    團隊作業會議 :a1, 2026-01-16, 2026-01-20
+    1F店面拜訪(CRM) :a2, 2026-01-20, 2026-01-31
+    2/1 理事會(會前確認) :milestone, 2026-02-01, 0d
     2/8 會員大會05 (定圖/估價) :crit, m1, 2026-02-08, 1d
-    黃金行政週 (備模擬網頁)   :active, a3, 2026-02-09, 4d
-    ★寶石06大會通知 (死線)    :crit, milestone, 2026-02-13, 0d
+    黃金行政週 (備模擬網頁) :active, a3, 2026-02-09, 4d
+    ★寶石06大會通知 (死線) :crit, milestone, 2026-02-13, 0d
     2/14-2/22 農暱春節 (線上模擬選屬) :done, a4, 2026-02-14, 2026-02-22
-
     section 第二階段:事業計畫
-    3/8 理事會 (確認草案)     :milestone, 2026-03-08, 0d
+    3/8 理事會 (確認草案) :milestone, 2026-03-08, 0d
     3/15 會員大會06 (定事業計畫) :crit, m2, 2026-03-15, 1d
-    ★寶石07大會通知 (死線)    :crit, milestone, 2026-03-18, 0d
-    3/29 自辦公聴會 (啟動選配) :active, m3, 2026-03-29, 1d
-
+    ★寶石07大會通知 (死線) :crit, milestone, 2026-03-18, 0d
+    3/29 自辦公聽會 (啟動選配) :active, m3, 2026-03-29, 1d
     section 第三階段:選配定案
     4/1-5/5 正式選配期間 (35天) :active, s1, 2026-04-01, 2026-05-05
-    ★寶石07大會通知 (死線)    :crit, milestone, 2026-04-30, 0d
-    選配結果彙整             :2026-05-05, 1d
-    5/17 公開抽籤日 (全天)     :m4, 2026-05-17, 1d
-    5/20 理事會 (會前確認)     :milestone, 2026-05-20, 0d
+    ★寶石07大會通知 (死線) :crit, milestone, 2026-04-30, 0d
+    選配結果彙整 :2026-05-05, 1d
+    5/17 公開抽籤日 (全天) :m4, 2026-05-17, 1d
+    5/20 理事會 (會前確認) :milestone, 2026-05-20, 0d
     5/24 會員大會07 (定權變/事權) :crit, m5, 2026-05-24, 1d
-
     section 第四階段:報核
-    文書作業期 (印製/用印)    :w1, 2026-05-25, 2026-06-25
-    ★ 6/26 正式掛件報核      :crit, milestone, 2026-06-26, 0d
-            </div>
-        </div>
+    文書作業期 (印製/用印) :w1, 2026-05-25, 2026-06-25
+    ★ 6/26 正式掛件報核 :crit, milestone, 2026-06-26, 0d
+      </div>
     </div>
+  </div>
 
-    <script>
-        mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
-        mermaid.contentLoaded();
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    mermaid.contentLoaded();
 
-        function printGantt() {
-            window.print();
-        }
+    function printGantt() {
+      window.print();
+    }
 
-        function downloadChart() {
-            const svg = document.querySelector('.mermaid svg');
-            if (!svg) {
-                alert('圖表還未建完成，請稍後重試');
-                return;
-            }
-            const svgData = new XMLSerializer().serializeToString(svg);
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.onload = function() {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = 'gantt-chart.png';
-                link.click();
-            };
-            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-        }
+    function downloadChart() {
+      const svg = document.querySelector('.mermaid svg');
+      if (!svg) {
+        alert('圖表還未建完成，請稍後重試');
+        return;
+      }
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'gantt-chart.png';
+        link.click();
+      };
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    }
 
-        function toggleFullscreen() {
-            const wrapper = document.querySelector('.mermaid-wrapper');
-            if (!document.fullscreenElement) {
-                wrapper.requestFullscreen().catch(err => {
-                    alert(`選項錯誤: ${err.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
-    </script>
+    function toggleFullscreen() {
+      const wrapper = document.querySelector('.mermaid-wrapper');
+      if (!document.fullscreenElement) {
+        wrapper.requestFullscreen().catch(err => {
+          alert(`選項錯誤: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
 </body>
 </html>
